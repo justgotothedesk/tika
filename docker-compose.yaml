@@ -1,0 +1,9 @@
+version: '3'
+
+services:
+  tika-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "9687:8080"
