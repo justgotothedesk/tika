@@ -1,5 +1,6 @@
 package com.example.tika;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.tika.exception.TikaException;
 import org.apache.tika.metadata.Metadata;
 import org.apache.tika.parser.AutoDetectParser;
@@ -14,6 +15,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+@Slf4j
 @Service
 public class TikaService {
     public String extractText(File file, StringBuilder metadataOutput) {
