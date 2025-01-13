@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Apache Tika File Extractor</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+        form {
+            margin-bottom: 20px;
+        }
+        h1 {
+            margin-bottom: 20px;
+        }
+        div {
+            width: 80%;
+            text-align: center;
+        }
+        pre {
+            text-align: left;
+            background-color: #f9f9f9;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            overflow-y: auto;
+            max-height: 300px;
+            white-space: pre-wrap;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+<h1>Apache Tika File Extractor</h1>
+
+<form method="post" action="/upload" enctype="multipart/form-data">
+    <label for="file">Choose a file:</label>
+    <input type="file" name="file" id="file" required>
+    <button type="submit">Upload</button>
+</form>
+
+<div th:if="${metadata}">
+    <h2>File Metadata:</h2>
+    <pre th:text="${metadata}"></pre>
+</div>
+
+<div th:if="${fileName}">
+    <h2>Extracted Text from: <span th:text="${fileName}"></span></h2>
+    <pre th:text="${extractedText}"></pre>
+</div>
+
+<div th:if="${message}">
+    <p th:text="${message}" style="color: red;"></p>
+</div>
+</body>
+</html>
