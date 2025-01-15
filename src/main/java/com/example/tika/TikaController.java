@@ -51,7 +51,7 @@ public class TikaController {
 //
 //        return ResponseEntity.ok(response);
 //    }
-    @RequestMapping(value = "/api/v1/uploadFiles", method = RequestMethod.POST)
+    @RequestMapping(value = "/dd", method = RequestMethod.POST)
     @ResponseBody
     public ResponseEntity<String> requestFileAPI(){
 
