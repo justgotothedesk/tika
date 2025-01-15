@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
-@Controller
+@RestController
 public class TikaController {
     @Autowired
     private TikaService tikaService;
@@ -52,6 +52,7 @@ public class TikaController {
 //        return ResponseEntity.ok(response);
 //    }
     @RequestMapping(value = "/api/v1/uploadFiles", method = RequestMethod.POST)
+    @ResponseBody
     public ResponseEntity<String> requestFileAPI(){
 
         return ResponseEntity.ok("잘 되어라!");
