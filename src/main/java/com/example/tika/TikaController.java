@@ -8,9 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
@@ -35,23 +33,28 @@ public class TikaController {
      * @param files: 사용자로부터 전달되는 여러 파일들의 정보
      * @return
      */
-    @PostMapping("/api/v1/uploadFiles")
-    public ResponseEntity<FileResponseDTO> requestFileAPI(@RequestParam("files") MultipartFile[] files){
-        List<FileInfoDTO> fileInfoList = new ArrayList<>();
+//    @PostMapping("/api/v1/uploadFiles")
+//    public ResponseEntity<FileResponseDTO> requestFileAPI(@RequestParam("files") MultipartFile[] files){
+//        List<FileInfoDTO> fileInfoList = new ArrayList<>();
+//
+//        try {
+//            for (MultipartFile file: files) {
+//                FileInfoDTO fileInfoDTO = tikaService.extractTextAPI(file);
+//                fileInfoList.add(fileInfoDTO);
+//            }
+//        } catch(Exception e) {
+//            log.error(e.getMessage());
+//            fileInfoList.add(new FileInfoDTO("Fail", "Fail", "Fail"));
+//        }
+//
+//        FileResponseDTO response = new FileResponseDTO(files.length, fileInfoList);
+//
+//        return ResponseEntity.ok(response);
+//    }
+    @RequestMapping(value = "/api/v1/uploadFiles", method = RequestMethod.POST)
+    public ResponseEntity<String> requestFileAPI(){
 
-        try {
-            for (MultipartFile file: files) {
-                FileInfoDTO fileInfoDTO = tikaService.extractTextAPI(file);
-                fileInfoList.add(fileInfoDTO);
-            }
-        } catch(Exception e) {
-            log.error(e.getMessage());
-            fileInfoList.add(new FileInfoDTO("Fail", "Fail", "Fail"));
-        }
-
-        FileResponseDTO response = new FileResponseDTO(files.length, fileInfoList);
-
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok("잘 되어라!");
     }
 
     /**
