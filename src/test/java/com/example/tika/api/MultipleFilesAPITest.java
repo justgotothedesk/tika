@@ -50,10 +50,10 @@ public class MultipleFilesAPITest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.fileCount").value(2))
-                .andExpect(jsonPath("$.infos[0].filePath").value("test1.txt"))
+                .andExpect(jsonPath("$.infos[0].fileName").value("test1.txt"))
                 .andExpect(jsonPath("$.infos[0].contentType").value(MediaType.TEXT_PLAIN_VALUE))
                 .andExpect(jsonPath("$.infos[0].textData").value("This is a test file 1"))
-                .andExpect(jsonPath("$.infos[1].filePath").value("test2.txt"))
+                .andExpect(jsonPath("$.infos[1].fileName").value("test2.txt"))
                 .andExpect(jsonPath("$.infos[1].contentType").value(MediaType.TEXT_PLAIN_VALUE))
                 .andExpect(jsonPath("$.infos[1].textData").value("This is a test file 2"));
     }

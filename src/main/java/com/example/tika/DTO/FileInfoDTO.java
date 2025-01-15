@@ -6,7 +6,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 public class FileInfoDTO {
-    private String filePath;
+    private String fileName;
     private String contentType;
     private String textData;
 }
