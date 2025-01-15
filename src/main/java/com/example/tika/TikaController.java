@@ -1,15 +1,21 @@
 package com.example.tika;
 
+import com.example.tika.DTO.FileInfoDTO;
+import com.example.tika.DTO.FileResponseDTO;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 @Slf4j
 @Controller
@@ -24,6 +30,37 @@ public class TikaController {
         return "index";
     }
 
+    /**
+     * API용 메서드
+     * @param files: 사용자로부터 전달되는 여러 파일들의 정보
+     * @return
+     */
+    @PostMapping("/api/v1/uploadFiles")
+    public ResponseEntity<FileResponseDTO> requestFileAPI(@RequestParam("files") MultipartFile[] files){
+        List<FileInfoDTO> fileInfoList = new ArrayList<>();
+
+        try {
+            for (MultipartFile file: files) {
+                FileInfoDTO fileInfoDTO = tikaService.extractTextAPI(file);
+                fileInfoList.add(fileInfoDTO);
+            }
+        } catch(Exception e) {
+            log.error(e.getMessage());
+            fileInfoList.add(new FileInfoDTO("Fail", "Fail", "Fail"));
+        }
+
+        FileResponseDTO response = new FileResponseDTO(files.length, fileInfoList);
+
+        return ResponseEntity.ok(response);
+    }
+
+    /**
+     * Web UI용 메서드
+     * @param file: 사용자로부터 전달되는 파일(단일)
+     * @param model: 전달용 JSON 파일
+     * @param request: 사용자 IP 로깅용
+     * @return
+     */
     @PostMapping("/upload")
     public String uploadFile(MultipartFile file, Model model, HttpServletRequest request) {
         String clientIp = getClientIp(request);
