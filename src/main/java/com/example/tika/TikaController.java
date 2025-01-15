@@ -33,29 +33,23 @@ public class TikaController {
      * @param files: 사용자로부터 전달되는 여러 파일들의 정보
      * @return
      */
-//    @PostMapping("/api/v1/uploadFiles")
-//    public ResponseEntity<FileResponseDTO> requestFileAPI(@RequestParam("files") MultipartFile[] files){
-//        List<FileInfoDTO> fileInfoList = new ArrayList<>();
-//
-//        try {
-//            for (MultipartFile file: files) {
-//                FileInfoDTO fileInfoDTO = tikaService.extractTextAPI(file);
-//                fileInfoList.add(fileInfoDTO);
-//            }
-//        } catch(Exception e) {
-//            log.error(e.getMessage());
-//            fileInfoList.add(new FileInfoDTO("Fail", "Fail", "Fail"));
-//        }
-//
-//        FileResponseDTO response = new FileResponseDTO(files.length, fileInfoList);
-//
-//        return ResponseEntity.ok(response);
-//    }
-    @RequestMapping(value = "/dd", method = RequestMethod.POST)
-    @ResponseBody
-    public ResponseEntity<String> requestFileAPI(){
+    @PostMapping("/api/v1/uploadFiles")
+    public ResponseEntity<FileResponseDTO> requestFileAPI(@RequestParam("files") MultipartFile[] files){
+        List<FileInfoDTO> fileInfoList = new ArrayList<>();
 
-        return ResponseEntity.ok("잘 되어라!");
+        try {
+            for (MultipartFile file: files) {
+                FileInfoDTO fileInfoDTO = tikaService.extractTextAPI(file);
+                fileInfoList.add(fileInfoDTO);
+            }
+        } catch(Exception e) {
+            log.error(e.getMessage());
+            fileInfoList.add(new FileInfoDTO("Fail", "Fail", "Fail"));
+        }
+
+        FileResponseDTO response = new FileResponseDTO(files.length, fileInfoList);
+
+        return ResponseEntity.ok(response);
     }
 
     /**
