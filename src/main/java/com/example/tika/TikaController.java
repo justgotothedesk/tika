@@ -6,12 +6,13 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.lang.management.ManagementFactory;
+import java.lang.management.OperatingSystemMXBean;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,6 +38,9 @@ public class TikaController {
     public ResponseEntity<FileResponseDTO> requestFileAPI(@RequestParam("files") MultipartFile[] files){
         List<FileInfoDTO> fileInfoList = new ArrayList<>();
 
+        log.info("Starting file processing");
+        logSystemResources();
+
         try {
             for (MultipartFile file: files) {
                 FileInfoDTO fileInfoDTO = tikaService.extractTextAPI(file);
@@ -47,6 +51,8 @@ public class TikaController {
             fileInfoList.add(new FileInfoDTO("Fail", "Fail", "Fail"));
         }
 
+        log.info("File {}'s processing completed", fileInfoList.getFirst().getFileName());
+        logSystemResources();
         FileResponseDTO response = new FileResponseDTO(files.length, fileInfoList);
 
         return ResponseEntity.ok(response);
@@ -104,11 +110,35 @@ public class TikaController {
         return "index";
     }
 
+    /**
+     * 접속하는 사용자 IP 추출을 위한 메서드
+     * @param request
+     * @return
+     */
     private String getClientIp(HttpServletRequest request) {
         String ip = request.getHeader("X-Forwarded-For");
         if (ip == null || ip.isEmpty()) {
             ip = request.getRemoteAddr();
         }
         return ip;
+    }
+
+    /**
+     * 리소스 사용량 측정을 위한 메서드
+     */
+    private void logSystemResources() {
+        OperatingSystemMXBean osBean = ManagementFactory.getOperatingSystemMXBean();
+        Runtime runtime = Runtime.getRuntime();
+
+        double cpuLoad = osBean.getSystemLoadAverage(); // CPU 부하
+        long freeMemory = runtime.freeMemory(); // 사용 가능한 메모리
+        long totalMemory = runtime.totalMemory(); // JVM에 할당된 총 메모리
+        long maxMemory = runtime.maxMemory(); // JVM이 사용할 수 있는 최대 메모리
+
+        log.info("File: {} System Resources - CPU Load: {:.2f}, Free Memory: {} MB, Total Memory: {} MB, Max Memory: {} MB",
+                cpuLoad,
+                freeMemory / (1024 * 1024),
+                totalMemory / (1024 * 1024),
+                maxMemory / (1024 * 1024));
     }
 }
