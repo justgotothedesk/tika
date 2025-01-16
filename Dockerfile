@@ -10,4 +10,4 @@ RUN apt-get update && apt-get install -y \
     tesseract-ocr-kor && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
-ENTRYPOINT ["java", "-jar", "app.jar"]
+ENTRYPOINT ["java", "-Duser.timezone=Asia/Seoul", "-jar", "app.jar"]
