@@ -2,7 +2,8 @@ FROM openjdk:17-jdk-slim
 
 WORKDIR /app
 
-COPY build/libs/*.jar app.jar
+RUN echo $(date) > /app/last_build
+COPY build/libs/tika-0.0.1-SNAPSHOT.jar app.jar
 
 RUN apt-get update && apt-get install -y \
     tesseract-ocr \
