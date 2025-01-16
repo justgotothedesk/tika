@@ -51,7 +51,12 @@ public class TikaController {
             fileInfoList.add(new FileInfoDTO("Fail", "Fail", "Fail"));
         }
 
-        log.info("File {}'s processing completed", fileInfoList.getFirst().getFileName());
+        if (!fileInfoList.isEmpty()) {
+            log.info("File {}'s processing completed", fileInfoList.get(0).getFileName());
+        } else {
+            log.warn("No files were processed.");
+        }
+
         logSystemResources();
         FileResponseDTO response = new FileResponseDTO(files.length, fileInfoList);
 
