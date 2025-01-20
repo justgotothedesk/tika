@@ -16,7 +16,7 @@ public class FileUploadExceptionAdvice {
     @ExceptionHandler(MaxUploadSizeExceededException.class)
     public ResponseEntity<FileResponseDTO> handleMaxSizeException(MaxUploadSizeExceededException exc) {
         List<FileInfoDTO> fileInfoList = new ArrayList<>();
-        fileInfoList.add(new FileInfoDTO("Fail", "Fail", "File size exceeds the maximum limit (100MB). Please upload a smaller file."));
+        fileInfoList.add(new FileInfoDTO("Fail", "Fail", "File size exceeds the maximum limit (500MB). Please upload a smaller file."));
 
         return ResponseEntity.ok(new FileResponseDTO(1, fileInfoList));
     }

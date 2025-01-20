@@ -5,5 +5,5 @@ spring:
     time-zone: Asia/Seoul
   servlet:
     multipart:
-      max-file-size: 100MB
-      max-request-size: 100MB
+      max-file-size: 500MB
+      max-request-size: 500MB
