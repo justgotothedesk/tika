@@ -1,6 +1,7 @@
 package com.example.tika;
 
 import com.example.tika.DTO.FileExtensionResponse;
+import com.example.tika.DTO.FileExtensionResult;
 import com.example.tika.DTO.FileInfoDTO;
 import com.example.tika.DTO.FileResponseDTO;
 import com.example.tika.Util.RequestUtil;
@@ -74,18 +75,28 @@ public class TikaController {
      * @return
      */
     @PostMapping("/api/v1/extractExtension")
-    public ResponseEntity<List<FileExtensionResponse>> requestExtension(@RequestParam("files") MultipartFile[] files) {
-        List<FileExtensionResponse> responses = new ArrayList<>();
+    public ResponseEntity<FileExtensionResponse> requestExtension(@RequestParam("files") MultipartFile[] files) {
+        List<FileExtensionResult> responses = new ArrayList<>();
 
         if (files == null || files.length == 0) {
-            return ResponseEntity.badRequest().body(List.of(new FileExtensionResponse("fail", "fail", "fail", "fail")));
+            return ResponseEntity.badRequest().body(new FileExtensionResponse(0, responses));
         }
 
         for (MultipartFile file : files) {
             responses.add(tikaService.extractExtention(file));
+            List<Double> beforeResource = SystemResourceUtil.getSystemResources();
+
+            List<Double> afterResource = SystemResourceUtil.getSystemResources();
+            double memoryChange = afterResource.get(0) - beforeResource.get(0);
+            double cpuChange = (afterResource.get(1) - beforeResource.get(1)) * 100;
+
+            log.info("File '{}' processed successfully. Used Memory: {} MB, CPU Load Change: {}%",
+                    file.getOriginalFilename(), memoryChange, cpuChange);
         }
 
-        return ResponseEntity.ok(responses);
+        FileExtensionResponse response = new FileExtensionResponse(files.length, responses);
+
+        return ResponseEntity.ok(response);
     }
 
 

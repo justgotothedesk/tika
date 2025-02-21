@@ -9,8 +9,9 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class FileExtensionResponse {
-    private int fileCount;
-    private List<FileExtensionResult> results;
+public class FileExtensionResult {
+    private String fileName;
+    private String originExtension;
+    private String parsedExtension;
+    private String isSame;
 }
-

@@ -1,6 +1,7 @@
 package com.example.tika;
 
 import com.example.tika.DTO.FileExtensionResponse;
+import com.example.tika.DTO.FileExtensionResult;
 import com.example.tika.DTO.FileInfoDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.tika.Tika;
@@ -52,11 +53,12 @@ public class TikaService {
         }
     }
 
-    public FileExtensionResponse extractExtention(MultipartFile file) {
+    public FileExtensionResult extractExtention(MultipartFile file) {
         File tempFile = null;
 
         try {
             tempFile = File.createTempFile("upload", file.getOriginalFilename());
+            log.info("File: {}, Detected MIME Type: {}", file.getOriginalFilename(), tika.detect(tempFile));
             file.transferTo(tempFile);
 
             // MIME 타입 검출
@@ -67,13 +69,13 @@ public class TikaService {
             if (!expectedExtension.equals(actualExtension)) {
                 log.warn("File extension mismatch detected! File: {} (Expected: {}, Detected: {})",
                         file.getOriginalFilename(), expectedExtension, detectedMimeType);
-                return new FileExtensionResponse(file.getOriginalFilename(), actualExtension, expectedExtension, "false");
+                return new FileExtensionResult(file.getOriginalFilename(), actualExtension, expectedExtension, "false");
             }
 
-            return new FileExtensionResponse(file.getOriginalFilename(), actualExtension, expectedExtension, "true");
+            return new FileExtensionResult(file.getOriginalFilename(), actualExtension, expectedExtension, "true");
         } catch (IOException e) {
             log.error("Failed to process file: {}", e.getMessage(), e);
-            return new FileExtensionResponse("fail", "fail", "fail", "fail");
+            return new FileExtensionResult("fail", "fail", "fail", "fail");
         } finally {
             if (tempFile != null && tempFile.exists()) {
                 if (!tempFile.delete()) {
