@@ -1,5 +1,6 @@
 package com.example.tika;
 
+import com.example.tika.DTO.FileExtensionResponse;
 import com.example.tika.DTO.FileInfoDTO;
 import com.example.tika.DTO.FileResponseDTO;
 import com.example.tika.Util.RequestUtil;
@@ -65,6 +66,26 @@ public class TikaController {
         FileResponseDTO response = new FileResponseDTO(files.length, fileInfoList);
 
         return ResponseEntity.ok(response);
+    }
+
+    /**
+     * 파일 확장자 위조 여부 판단 API
+     * @param files: 사용자로부터 전달되는 여러 파일들의 정보
+     * @return
+     */
+    @PostMapping("/api/v1/extractExtension")
+    public ResponseEntity<List<FileExtensionResponse>> requestExtension(@RequestParam("files") MultipartFile[] files) {
+        List<FileExtensionResponse> responses = new ArrayList<>();
+
+        if (files == null || files.length == 0) {
+            return ResponseEntity.badRequest().body(List.of(new FileExtensionResponse("fail", "fail", "fail", "fail")));
+        }
+
+        for (MultipartFile file : files) {
+            responses.add(tikaService.extractExtention(file));
+        }
+
+        return ResponseEntity.ok(responses);
     }
 
 
