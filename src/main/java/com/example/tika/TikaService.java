@@ -22,6 +22,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 
 @Slf4j
 @Service
@@ -58,15 +59,15 @@ public class TikaService {
 
         try {
             tempFile = File.createTempFile("upload", file.getOriginalFilename());
-            log.info("File: {}, Detected MIME Type: {}", file.getOriginalFilename(), tika.detect(tempFile));
             file.transferTo(tempFile);
+            log.info("File: {}, Detected MIME Type: {}", file.getOriginalFilename(), tika.detect(tempFile));
 
             // MIME 타입 검출
             String detectedMimeType = tika.detect(tempFile);
             String expectedExtension = getExtensionFromMimeType(detectedMimeType);
             String actualExtension = getFileExtension(file.getOriginalFilename());
 
-            if (!expectedExtension.equals(actualExtension)) {
+            if (!isValidExtension(detectedMimeType, actualExtension)) {
                 log.warn("File extension mismatch detected! File: {} (Expected: {}, Detected: {})",
                         file.getOriginalFilename(), expectedExtension, detectedMimeType);
                 return new FileExtensionResult(file.getOriginalFilename(), actualExtension, expectedExtension, "false");
@@ -97,9 +98,20 @@ public class TikaService {
 
     private String getFileExtension(String filename) {
         if (filename == null || !filename.contains(".")) {
-            return "";
+            return "unknown";
         }
         return filename.substring(filename.lastIndexOf(".") + 1).toLowerCase();
+    }
+
+    private boolean isValidExtension(String mimeType, String actualExtension) {
+        try {
+            MimeType type = mimeTypes.forName(mimeType);
+            List<String> validExtensions = List.of(type.getExtension().replace(".", ""));
+            return validExtensions.contains(actualExtension);
+        } catch (MimeTypeException e) {
+            log.warn("Unknown MIME type: {}", mimeType);
+            return false;
+        }
     }
 
 

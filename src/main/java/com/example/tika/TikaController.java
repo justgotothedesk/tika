@@ -83,8 +83,8 @@ public class TikaController {
         }
 
         for (MultipartFile file : files) {
-            responses.add(tikaService.extractExtention(file));
             List<Double> beforeResource = SystemResourceUtil.getSystemResources();
+            responses.add(tikaService.extractExtention(file));
 
             List<Double> afterResource = SystemResourceUtil.getSystemResources();
             double memoryChange = afterResource.get(0) - beforeResource.get(0);
