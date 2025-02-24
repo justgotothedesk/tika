@@ -22,7 +22,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.List;
 
 @Slf4j
 @Service
@@ -62,18 +61,18 @@ public class TikaService {
             file.transferTo(tempFile);
             log.info("File: {}, Detected MIME Type: {}", file.getOriginalFilename(), tika.detect(tempFile));
 
-            // MIME 타입 검출
             String detectedMimeType = tika.detect(tempFile);
             String expectedExtension = getExtensionFromMimeType(detectedMimeType);
             String actualExtension = getFileExtension(file.getOriginalFilename());
 
-            if (!isValidExtension(detectedMimeType, actualExtension)) {
-                log.warn("File extension mismatch detected! File: {} (Expected: {}, Detected: {})",
-                        file.getOriginalFilename(), expectedExtension, detectedMimeType);
-                return new FileExtensionResult(file.getOriginalFilename(), actualExtension, expectedExtension, "false");
-            }
+            String normalizedExpected = (expectedExtension != null) ? expectedExtension.toLowerCase() : "";
+            String normalizedActual = (actualExtension != null) ? actualExtension.toLowerCase() : "";
+            String isSame = normalizedExpected.equals(normalizedActual) ? "true" : "false";
 
-            return new FileExtensionResult(file.getOriginalFilename(), actualExtension, expectedExtension, "true");
+            log.info("File: {}, MIME Type: {}, Expected Extension: {}, Actual Extension: {}",
+                    file.getOriginalFilename(), detectedMimeType, expectedExtension, actualExtension);
+
+            return new FileExtensionResult(file.getOriginalFilename(), actualExtension, expectedExtension, isSame);
         } catch (IOException e) {
             log.error("Failed to process file: {}", e.getMessage(), e);
             return new FileExtensionResult("fail", "fail", "fail", "fail");
@@ -88,7 +87,9 @@ public class TikaService {
 
     private String getExtensionFromMimeType(String mimeType) {
         try {
-            MimeType type = mimeTypes.forName(mimeType);
+            String cleanMimeType = mimeType.split(";")[0].trim();
+
+            MimeType type = mimeTypes.forName(cleanMimeType);
             return type.getExtension().replace(".", "");
         } catch (MimeTypeException e) {
             log.warn("Unknown MIME type: {}", mimeType);
@@ -102,18 +103,6 @@ public class TikaService {
         }
         return filename.substring(filename.lastIndexOf(".") + 1).toLowerCase();
     }
-
-    private boolean isValidExtension(String mimeType, String actualExtension) {
-        try {
-            MimeType type = mimeTypes.forName(mimeType);
-            List<String> validExtensions = List.of(type.getExtension().replace(".", ""));
-            return validExtensions.contains(actualExtension);
-        } catch (MimeTypeException e) {
-            log.warn("Unknown MIME type: {}", mimeType);
-            return false;
-        }
-    }
-
 
     /**
      * Web UI용 메서드
